@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 )
 
 func main() {
@@ -25,19 +24,11 @@ func main() {
 	for scanner.Scan() {
 		txt := scanner.Text()
 
-		// Check if number is positive or negative
-		factor := 1
-		if strings.HasPrefix(txt, "-") {
-			factor = -1
-		}
-
-		// Get the number part from a row -14 --> 14, or +5 --> 5
-		numberPart := txt[1:]
-		i, err := strconv.Atoi(numberPart)
+		i, err := strconv.Atoi(txt)
 		if err != nil {
 			log.Fatal("Input not valid", err)
 		}
-		freq += factor * i
+		freq += i
 	}
 
 	fmt.Println("Final frequency is:", freq)
