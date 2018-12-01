@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	fmt.Println("Advent of Code - Day 1")
+	fmt.Println("Advent of Code - Day 1 - Go")
 
-	inputFile := "input.txt"
+	inputFile := "../input.txt"
 	f, err := os.Open(inputFile)
 	if err != nil {
 		log.Fatal(err)
