@@ -4,22 +4,19 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"regexp"
-	"strconv"
+	"strings"
 )
 
-func combineElfInput(elfInput [][5]int, fabricSize int) [][]int {
+func markFabric(elfClaims []claim, fabricSize int) [][]int {
 	fabric := make([][]int, fabricSize)
 	for i := range fabric {
 		fabric[i] = make([]int, fabricSize)
 	}
 
-	for _, e := range elfInput {
-		xStart, yStart := e[1], e[2]
-		xSteps, ySteps := e[3], e[4]
-		for dy := 0; dy < ySteps; dy++ {
-			for dx := 0; dx < xSteps; dx++ {
-				fabric[yStart+dy][xStart+dx]++
+	for _, c := range elfClaims {
+		for dy := 0; dy < c.H; dy++ {
+			for dx := 0; dx < c.W; dx++ {
+				fabric[c.Y+dy][c.X+dx]++
 			}
 		}
 	}
@@ -41,46 +38,40 @@ func countOverlap(fabric [][]int) int {
 	return overlap
 }
 
-func parseElfInput(input string) [][5]int {
-	parsedInput := [][5]int{}
+type claim struct {
+	ID, X, Y, W, H int
+}
+
+func parsedClaims(input string) []claim {
+	parsedInput := []claim{}
 
 	// Add elf claims to the fabric
-	re := regexp.MustCompile(`#(\d*) @ (\d*),(\d*): (\d*)x(\d*)`)
-	parsed := re.FindAllStringSubmatch(input, -1)
-
-	for _, elfInput := range parsed {
-		var e [5]int
-
-		// Skip the full match
-		for i, p := range elfInput[1:] {
-			// Expect good formatted input
-			e[i], _ = strconv.Atoi(p)
-		}
-
-		parsedInput = append(parsedInput, e)
+	for _, row := range strings.Split(input, "\n") {
+		var c claim
+		fmt.Sscanf(row, "#%d @ %d,%d: %dx%d", &c.ID, &c.X, &c.Y, &c.W, &c.H)
+		parsedInput = append(parsedInput, c)
 	}
 
 	return parsedInput
 }
 
-func nonOverlapping(fabric [][]int, elfInput [][5]int) int {
+func nonOverlappingClaims(fabric [][]int, elfClaims []claim) int {
 
-	for _, e := range elfInput {
-		ID := e[0]
-		xStart, yStart := e[1], e[2]
-		xSteps, ySteps := e[3], e[4]
+	for _, c := range elfClaims {
 		overlapFound := false
-		for dy := 0; dy < ySteps; dy++ {
-			for dx := 0; dx < xSteps; dx++ {
 
-				if fabric[yStart+dy][xStart+dx] > 1 {
+	breaker:
+		for dy := 0; dy < c.H; dy++ {
+			for dx := 0; dx < c.W; dx++ {
+				if fabric[c.Y+dy][c.X+dx] > 1 {
 					overlapFound = true
+					continue breaker
 				}
 			}
 		}
 
 		if overlapFound == false {
-			return ID
+			return c.ID
 		}
 	}
 	return -1
@@ -94,8 +85,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	parsed := parseElfInput(string(content))
-	fabric := combineElfInput(parsed, 1000)
+	parsed := parsedClaims(string(content))
+	fabric := markFabric(parsed, 1000)
 	fmt.Println("The number of square of fabric overlapping is:", countOverlap(fabric))
-	fmt.Println("The only square not overlapping is:", nonOverlapping(fabric, parsed))
+	fmt.Println("The only square not overlapping is:", nonOverlappingClaims(fabric, parsed))
 }

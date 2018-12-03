@@ -12,8 +12,8 @@ func TestOverlap(t *testing.T) {
 
 	expected := 4
 
-	parsedInput := parseElfInput(input)
-	fabric := combineElfInput(parsedInput, fabricSize)
+	parsedInput := parsedClaims(input)
+	fabric := markFabric(parsedInput, fabricSize)
 	output := countOverlap(fabric)
 
 	if output != expected {
@@ -29,9 +29,9 @@ func TestNonOverlap(t *testing.T) {
 
 	expected := 3
 
-	parsedInput := parseElfInput(input)
-	fabric := combineElfInput(parsedInput, fabricSize)
-	output := nonOverlapping(fabric, parsedInput)
+	parsedInput := parsedClaims(input)
+	fabric := markFabric(parsedInput, fabricSize)
+	output := nonOverlappingClaims(fabric, parsedInput)
 
 	if output != expected {
 		t.Fatalf("\nExpected %d, got %d\n", expected, output)
