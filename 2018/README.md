@@ -18,3 +18,11 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 | 9   | 45m    | 2h     | **2h45**  |        |        |         | First time profiling a Go program. First time using linked lists.             |
 | 10  |        |        | ****      |        |        |         |                                                                               |
 | 11  |        |        | ****      |        |        |         |                                                                               |
+
+
+### Lessons leartn
+1) `Linked lists` is a thing
+2) `Pprof` is a thing
+3) The [standard lib](https://golang.org/pkg/#stdlib) has implementations of  `ring`,``heap`,`list`.
+4) Turn on GC tracing with GODEBUG=gctrace=1
+5) Turn of GC with GOGC=-1

@@ -24,9 +24,7 @@ func linkedMarbles(nPlayers, maxScore int) int {
 			// fmt.Print("Current is", current)
 			score[p] += m
 
-			for i := 0; i < 7; i++ {
-				current = current.prev
-			}
+			current = current.prev.prev.prev.prev.prev.prev.prev
 			score[p] += current.val
 
 			// Link over the old node
