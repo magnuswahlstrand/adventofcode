@@ -12,9 +12,9 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 | 3   | 43m    | 35m    | **1h18m** |        |        |         |                                                                               |
 | 4   | 1h15m  | 4m     | **1h19m** |        |        |         | Forgot to sort list, had to implement a few workarounds because of weird data |
 | 5   | 29m    | 12m    | **41m**   |        |        |         | A few corner cases. New record for fastest Go.                                |
-| 6   | 50m    | 14m    | **1h04m** |        |        |         |                                                                               |
+| 6   | 50m    | 14m    | **1h04**  |        |        |         |                                                                               |
 | 7   | 35m    | 55m    | **1h30**  |        |        |         | Hard!                                                                         |
 | 8   | 45m    | 1h15   | **2h**    |        |        |         | Clearly approaching the limit of my algorithm knowledge :-D. Fun though.      |
-| 9   |        |        | ****      |        |        |         |                                                                               |
+| 9   | 45m    | 2h     | **2h45**  |        |        |         | First time profiling a Go program. First time using linked lists.             |
 | 10  |        |        | ****      |        |        |         |                                                                               |
 | 11  |        |        | ****      |        |        |         |                                                                               |
