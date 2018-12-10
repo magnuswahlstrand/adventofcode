@@ -24,7 +24,6 @@ const (
 
 func main() {
 
-	// test := "0 2 7 0"
 	test2 := "4	10	4	1	8	4	9	14	5	1	14	15	0	15	3	5"
 
 	const memorySize = memorySizeLg
@@ -53,7 +52,7 @@ func main() {
 			}
 		}
 
-		// fmt.Printf("Largest value was %d at %d\n", max, maxI)
+		// Redistribute its memory
 		banks[maxI] = 0
 		i := (maxI + 1)
 		for p := max; p > 0; p-- {
@@ -63,7 +62,6 @@ func main() {
 			// Move forward
 			i++
 		}
-		// fmt.Println(banks)
 	}
 	fmt.Println("Infinite loop found at", r)               // Took 28 minutes
 	fmt.Println("Infinite loop found at", r-memory[banks]) // Took 2 minutes

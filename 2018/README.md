@@ -23,12 +23,14 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 | 11  |        |        | ****      |        |        |         |                                                                               |
 | 11  |        |        | ****      |        |        |         |                                                                               |
 
+### Lessons learnt
 
-### Lessons leartn
 1) `Linked lists` is a thing
 2) `Pprof` is a thing
 3) The [standard lib](https://golang.org/pkg/#stdlib) has implementations of  `ring`,``heap`,`list`.
 4) Turn on GC tracing with GODEBUG=gctrace=1
 5) Turn of GC with GOGC=-1
-6) Printing negative and positive integers the same width umping `fmt.Printf("% 3d ->% 3d",...` -->" -11 ->123" 
-7) Use slices as map keys: `map[[0 2 7 0]:1 [0 2 6 0]:2]` 
+6) Printing negative and positive integers the same width umping `fmt.Printf("% 3d ->% 3d",...` -->" -11 ->123"
+7) Use slices as map keys: `map[[0 2 7 0]:1 [0 2 6 0]:2]`  
+8) VsCode: Set bookmark `cmd + shift + <N>`, go to bookmark `cmd + <N>`
+9) VsCode: Previous cursor location `ctrl + -`, next cursor location `ctrl + shift + -`
