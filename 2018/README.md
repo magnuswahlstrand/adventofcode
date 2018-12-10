@@ -5,7 +5,7 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 ## Time spent
 
 | Day | Go     |        |           | Node   |        |         | Comment                                                                       |
-| --- | ------ | ------ | --------- | ------ | ------ | ------- | ----------------------------------------------------------------------------- |
+|-----|--------|--------|-----------|--------|--------|---------|-------------------------------------------------------------------------------|
 | Day | Part 1 | Part 2 | Total     | Part 1 | Part 2 | Total   |                                                                               |
 | 1   |        |        | ?         |        |        | ?       |                                                                               |
 | 2   | 13m    | 32m    | **45m**   | 32m    | 15m    | **47m** | Part 2 quick in JS, since already solved in Go                                |
@@ -16,7 +16,11 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 | 7   | 35m    | 55m    | **1h30**  |        |        |         | Hard!                                                                         |
 | 8   | 45m    | 1h15   | **2h**    |        |        |         | Clearly approaching the limit of my algorithm knowledge :-D. Fun though.      |
 | 9   | 45m    | 2h     | **2h45**  |        |        |         | First time profiling a Go program. First time using linked lists.             |
-| 10  |        |        | ****      |        |        |         |                                                                               |
+| 10  | 50m    | 5m     | **55m**   |        |        |         | Yeah! Pretty quick this time                                                  |
+| 11  |        |        | ****      |        |        |         |                                                                               |
+| 11  |        |        | ****      |        |        |         |                                                                               |
+| 11  |        |        | ****      |        |        |         |                                                                               |
+| 11  |        |        | ****      |        |        |         |                                                                               |
 | 11  |        |        | ****      |        |        |         |                                                                               |
 
 
