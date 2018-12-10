@@ -10,48 +10,48 @@ import (
 
 func calc(cmds []string) (int, int) {
 	var maxEver int
+	var target, condA, operator, comperator, tmp string
+	var change, condB int
 	registries := make(map[string]*int)
 	for _, cmd := range cmds {
-		fields := strings.Fields(cmd)
-		target := fields[0]
-		cond := fields[4]
+		fmt.Sscanf(cmd, "%s %s %d %s %s %s %d", &target, &operator, &change, &tmp, &condA, &comperator, &condB)
 
 		if registries[target] == nil {
 			registries[target] = new(int)
 		}
 
-		if registries[cond] == nil {
-			registries[cond] = new(int)
+		if registries[condA] == nil {
+			registries[condA] = new(int)
 		}
 
 		// Check condition
 		var condition bool
-		switch fields[5] {
+		switch comperator {
 		case "<":
-			condition = *registries[cond] < atoi(fields[6])
+			condition = *registries[condA] < condB
 		case ">":
-			condition = *registries[cond] > atoi(fields[6])
+			condition = *registries[condA] > condB
 		case ">=":
-			condition = *registries[cond] >= atoi(fields[6])
+			condition = *registries[condA] >= condB
 		case "<=":
-			condition = *registries[cond] <= atoi(fields[6])
+			condition = *registries[condA] <= condB
 		case "==":
-			condition = *registries[cond] == atoi(fields[6])
+			condition = *registries[condA] == condB
 		case "!=":
-			condition = *registries[cond] != atoi(fields[6])
+			condition = *registries[condA] != condB
 		default:
-			log.Fatal(fields[5])
+			log.Fatal(comperator)
 		}
 
 		// Perform command
 		if condition {
-			switch fields[1] {
+			switch operator {
 			case "inc":
-				*registries[target] += atoi(fields[2])
+				*registries[target] += change
 			case "dec":
-				*registries[target] -= atoi(fields[2])
+				*registries[target] -= change
 			default:
-				log.Fatal(fmt.Sprintf("'%s'", fields[1]))
+				log.Fatal(fmt.Sprintf("'%s'", operator))
 			}
 
 			if *registries[target] > maxEver {
@@ -66,6 +66,7 @@ func calc(cmds []string) (int, int) {
 			max = *r
 		}
 	}
+
 	return max, maxEver
 }
 

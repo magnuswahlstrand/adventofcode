@@ -34,3 +34,5 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 7) Use slices as map keys: `map[[0 2 7 0]:1 [0 2 6 0]:2]`  
 8) VsCode: Set bookmark `cmd + shift + <N>`, go to bookmark `cmd + <N>`
 9) VsCode: Previous cursor location `ctrl + -`, next cursor location `ctrl + shift + -`
+10) `fmt.Sscanf` is very convenient for reading forammted input of various types
+    1) Example: `fmt.Sscanf("string 10 -10", "%s %d %d",...)`
