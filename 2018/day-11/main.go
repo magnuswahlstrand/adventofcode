@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+
+	"gonum.org/v1/gonum/mat"
 )
 
-func powerLevel(x, y, sn int) int {
+func powerLevel(x, y, sn int) float64 {
 	// Find the fuel cell's rack ID, which is its X coordinate plus 10.
 	rackID := x + 10
 
@@ -22,29 +24,33 @@ func powerLevel(x, y, sn int) int {
 
 	// Subtract 5 from the power level.
 	pl -= 5
-	return pl
+	return float64(pl)
 }
 
 type gridPoint struct {
-	x, y, power, width int
+	x, y  int
+	power float64
+	width int
+}
+
+func (a gridPoint) String() string {
+	return fmt.Sprintf("% 4d,% 4d,% 4.0f", a.x+1, a.y+1, a.power)
 }
 
 func (a gridPoint) equals(b gridPoint) bool {
 	return a.x == b.x && a.y == b.y && a.power == b.power
 }
 
-func createGrid(sn int) [][]int {
-	grid := make([][]int, 300)
-	for i := range grid {
-		grid[i] = make([]int, 300)
-	}
+func createGrid(sn int) *mat.Dense {
+	g := mat.NewDense(300, 300, nil)
 
-	for y := range grid {
-		for x := range grid[y] {
-			grid[y][x] = powerLevel(x+1, y+1, sn)
+	for y := 0; y < 300; y++ {
+		for x := 0; x < 300; x++ {
+			g.Set(y, x, powerLevel(x+1, y+1, sn))
 		}
 	}
-	return grid
+
+	return g
 }
 
 func highestPowerLevelV2(sn int) gridPoint {
@@ -54,7 +60,7 @@ func highestPowerLevelV2(sn int) gridPoint {
 		power: -100,
 	}
 	for w := 1; w <= 300; w++ {
-		fmt.Println("Searching at:", w, ". Current max is:", max)
+		fmt.Printf("Search width % 3d, and current max is%s\n", w, max)
 		p := highestInGrid(grid, w)
 
 		if p.power > max.power {
@@ -69,35 +75,17 @@ func highestPowerLevel(sn int) gridPoint {
 	return highestInGrid(grid, 3)
 }
 
-func highestInGrid(grid [][]int, width int) gridPoint {
-	lenX := len(grid[0])
-	var max = -1
+func highestInGrid(grid *mat.Dense, width int) gridPoint {
+	lenY, lenX := grid.Dims()
+
+	var max float64 = -1
 	var highest gridPoint
-	for y := range grid {
-	Inner:
-		for x := range grid[y] {
+	for y := 0; y < lenY && y+width <= lenY; y++ {
+		for x := 0; x < lenX && x+width <= lenX; x++ {
 
-			// Investigate this point
-			var total int
-			for dy := 0; dy < width; dy++ {
-				for dx := 0; dx < width; dx++ {
-
-					if y+dy >= len(grid) || x+dx >= lenX {
-						continue Inner
-					}
-
-					total += grid[y+dy][x+dx]
-				}
-			}
-			if x >= 20 && x < 50 && y >= 40 && y < 79 {
-
-				// if (x == 21 && y == 61) || (x == 33 && y == 45) {
-				// 	fmt.Printf("{%d}", grid[y][x])
-				// } else {
-				// 	fmt.Printf("% 3d", grid[y][x])
-				// }
-			}
-			// fmt.Printf("% 3d (% 3d)", grid[y][x], total)
+			// var total float64
+			sl := grid.Slice(y, y+width, x, x+width)
+			total := mat.Sum(sl)
 
 			if total > max {
 				max = total
@@ -109,35 +97,16 @@ func highestInGrid(grid [][]int, width int) gridPoint {
 				}
 
 			}
-			// fmt.Printf("% 3d", total)
 
 		}
-
-		// if y >= 40 && y < 79 {
-		// 	fmt.Println("")
-		// }
 	}
 	return highest
 }
 
 func main() {
 	p := highestPowerLevel(8141)
-	fmt.Printf("Highest Power level is: %d at (x=%d,y=%d)", p.power, p.x+1, p.y+1)
+	fmt.Printf("Highest Power level is: %f at (x=%d,y=%d)\n", p.power, p.x+1, p.y+1)
 
 	p2 := highestPowerLevelV2(8141)
-	fmt.Printf("Highest Power level is: %d at (%d,%d,%d)", p2.power, p2.x+1, p2.y+1, p2.width)
-
-	// printGrid(createGrid(18), 33-1, 45-1)
-	// printGrid(createGrid(42), 21-1, 61-1)
-	// printGrid(createGrid(8141), point.x, point.y)
-}
-
-func printGrid(grid [][]int, x, y int) {
-	fmt.Println("")
-	for dy := 0; dy < 10; dy++ {
-		for dx := 0; dx < 10; dx++ {
-			fmt.Printf("% 3d", grid[y+dy-1][x+dx-1])
-		}
-		fmt.Println("")
-	}
+	fmt.Printf("Highest Power level is: %f at (%s)\n", p2.power, p2)
 }
