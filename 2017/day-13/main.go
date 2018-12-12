@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"github.com/pkg/profile"
 )
 
 // ScannerBoard holds the state of all scanners
@@ -11,24 +13,64 @@ type ScannerBoard struct {
 	scanners []*scanner
 }
 
-func (sb *ScannerBoard) reset() {
-	sb.pos = -1
-	for _, sc := range sb.scanners {
-		if sc.length > 0 {
-			sc.v = 1
-			sc.pos = 1
-		}
-	}
+func (sb *ScannerBoard) move() {
+	sb.pos++
 }
 
-func (sb *ScannerBoard) move() {
-	if sb.pos >= 0 {
-		sb.pos++
+func (sb *ScannerBoard) updateInitial(steps int) {
+
+	// Optimization
+	modMap := make(map[int]int)
+
+	var modSteps int
+	for i, sc := range sb.scanners {
+
+		// Optimization
+		if val, ok := modMap[sc.length]; ok {
+			modSteps = val
+		} else {
+			cycleTime := (2 * (sc.length - 1))
+			modSteps = (steps % cycleTime)
+			modMap[sc.length] = modSteps
+		}
+
+		offset := sc.id - i
+
+		for d := 0; d < modSteps+offset; d++ {
+			sc.pos += sc.v
+			if sc.pos >= sc.length+1 || sc.pos == 0 {
+				sc.v *= -1
+				sc.pos += 2 * sc.v
+			}
+		}
+	}
+
+}
+
+func (sb *ScannerBoard) setInitial() {
+
+	for i, sc := range sb.scanners {
+
+		offset := sc.id - i
+
+		for d := 0; d < offset; d++ {
+
+			sc.pos += sc.v
+			if sc.pos >= sc.length+1 || sc.pos == 0 {
+				sc.v *= -1
+				sc.pos += 2 * sc.v
+			}
+		}
+
+		sc.initV = sc.v
+		sc.initPos = sc.pos
 	}
 }
 
 func (sb *ScannerBoard) update() {
+
 	for _, sc := range sb.scanners {
+
 		sc.pos += sc.v
 		if sc.pos >= sc.length+1 || sc.pos == 0 {
 			sc.v *= -1
@@ -80,13 +122,67 @@ func (sb ScannerBoard) String() string {
 	return s
 }
 
-type scanner struct {
-	length int
-	v      int
-	pos    int
+func (sb *ScannerBoard) reset() {
+	for _, sc := range sb.scanners {
+		sc.pos = sc.initPos
+		sc.v = sc.initV
+	}
+
+	// sb.pos = -1
+	// for _, sc := range sb.scanners {
+	// 	if sc.length > 0 {
+	// 		sc.v = 1
+	// 		sc.pos = 1
+	// 	}
+	// }
 }
 
-func (sb ScannerBoard) check() int {
+func (sb *ScannerBoard) setNext() {
+	for _, sc := range sb.scanners {
+		var pos, v int
+		pos = sc.initPos
+		v = sc.initV
+
+		pos += v
+		if pos >= sc.length+1 || pos == 0 {
+			v *= -1
+			pos += 2 * v
+		}
+
+		sc.initPos = pos
+		sc.initV = v
+	}
+}
+
+func (sb *ScannerBoard) updateInitialV2() {
+
+	for _, sc := range sb.scanners {
+
+		var pos, v int
+		pos = sc.initPos
+		v = sc.initV
+
+		pos += sc.v
+		if pos >= sc.length+1 || pos == 0 {
+			v *= -1
+			pos += 2 * sc.v
+		}
+
+		sc.initPos = pos
+		sc.initV = v
+	}
+}
+
+type scanner struct {
+	id      int
+	length  int
+	v       int
+	pos     int
+	initV   int
+	initPos int
+}
+
+func (sb ScannerBoard) check(strict bool) int {
 
 	if sb.pos < 0 {
 		return 0
@@ -96,48 +192,98 @@ func (sb ScannerBoard) check() int {
 	if currentScanner.pos != 1 {
 		return 0
 	}
-	fmt.Printf("Was hit for %d damage\n", sb.pos*currentScanner.length)
+
+	dmg := sb.pos * currentScanner.length
+	// fmt.Printf("Was hit for %d damage\n", sb.pos*currentScanner.length)
+	if strict && dmg == 0 {
+		return 10000000
+	}
 	return sb.pos * currentScanner.length
+
 }
 
 func main() {
 
+	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+
 	var id, length int
 	// Get highest ID
-	rows := strings.Split(example, "\n")
+	rows := strings.Split(input, "\n")
 	fmt.Sscanf(rows[len(rows)-1], "%d: %d", &id, &length)
 
-	ss := make([]*scanner, id+1)
-	for i := 0; i < id; i++ {
-		ss[i] = &scanner{
-			length: 0,
-			v:      0,
-			pos:    0,
-		}
-	}
+	// ss := make([]*scanner, id+1)
+	// for i := 0; i < id; i++ {
+	// 	ss[i] = &scanner{
+	// 		length: 0,
+	// 		v:      0,
+	// 		pos:    0,
+	// 	}
+	// }
 
+	ss := []*scanner{}
 	for _, row := range rows {
 		fmt.Sscanf(row, "%d: %d", &id, &length)
-		ss[id] = &scanner{
-			length: length,
-			v:      1,
-			pos:    1,
-		}
+		ss = append(ss, &scanner{
+			id:      id,
+			length:  length,
+			pos:     1,
+			v:       1,
+			initV:   1,
+			initPos: 1,
+		})
 	}
 
 	sb := ScannerBoard{
 		pos:      0,
 		scanners: ss,
 	}
+	sb.setInitial()
 
-	var dmg int
-	for round := 0; round < len(ss); round++ {
-		fmt.Println(sb)
-		dmg += sb.check()
-		sb.move()
-		sb.update()
+	strict := true
+	for delay := 0; delay < 10000000; delay++ {
+		// fmt.Println("GOGO", delay)
+		sb.reset()
+		sb.setNext()
+		sb.pos = -1
+
+		// fmt.Printf("Initial\n")
+
+		// fmt.Println(sb)
+		// sb.updateInitialV2()
+		// sb.updateInitial()
+		// sb.reset()
+		// sb.setNext()
+		// sb.updateInitial(delay)
+
+		var dmg int
+
+	Inner:
+		for round := 0; sb.pos < len(ss)-1; round++ {
+			// fmt.Printf("Pico sec %d BEFORE (%d)\n", round, delay)
+			// fmt.Println(sb)
+			sb.move()
+			dmg += sb.check(strict)
+
+			if dmg > 0 {
+				break Inner
+			}
+			sb.update()
+			// fmt.Printf("Pico sec %d AFTER (%d)\n", round, delay)
+			// fmt.Println(sb)
+		}
+
+		if dmg == 0 {
+			fmt.Printf("Total damage: %d with a delay of %d\n", dmg, delay)
+			break
+		}
 	}
-	fmt.Printf("Total damage: %d", dmg)
+
+	// Initial solution took 11s for 10k
+	// Moving inital delay outside of loop took 1s for 10k
+	// Using modulus to remove steps --> 2.7 for 100k
+	// Skip modulus, and just step 1 ahead of initial previous step --> 3.9 for 10M steps
+
+	// 309984 too low
 }
 
 var example = `0: 3
