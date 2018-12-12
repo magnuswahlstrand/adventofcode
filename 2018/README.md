@@ -18,6 +18,9 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 | 9   | 45m    | 2h     | **2h45**  |        |        |         | First time profiling a Go program. First time using linked lists.                                     |
 | 10  | 50m    | 5m     | **55m**   |        |        |         | Yeah! Pretty quick this time                                                                          |
 | 11  | 1h30   | 15m    | **1h45**  |        |        |         | Wrong answer format, took 30 min. Part 2 tooks several minutes to complete, but converges in seconds. |
+| 12  | 45m    | 35m    | **1h20**  |        |        |         | Not bad, messed up a bit with counting the generations, and the padding                               |
+| 11  |        |        | ****      |        |        |         |                                                                                                       |
+| 11  |        |        | ****      |        |        |         |                                                                                                       |
 | 11  |        |        | ****      |        |        |         |                                                                                                       |
 | 11  |        |        | ****      |        |        |         |                                                                                                       |
 | 11  |        |        | ****      |        |        |         |                                                                                                       |
@@ -37,3 +40,4 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 10) `fmt.Sscanf` is very convenient for reading formatted input of various types
     1) Example: `fmt.Sscanf("string 10 -10", "%s %d %d",...)`
 11) [Stringer](https://tour.golang.org/methods/17) interface
+12) [Gonum](https://github.com/gonum/gonum) for Matrix manipulation (`matrix`,`sum`,`...`)

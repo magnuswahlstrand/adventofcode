@@ -83,7 +83,6 @@ func highestInGrid(grid *mat.Dense, width int) gridPoint {
 	for y := 0; y < lenY && y+width <= lenY; y++ {
 		for x := 0; x < lenX && x+width <= lenX; x++ {
 
-			// var total float64
 			sl := grid.Slice(y, y+width, x, x+width)
 			total := mat.Sum(sl)
 
@@ -95,9 +94,7 @@ func highestInGrid(grid *mat.Dense, width int) gridPoint {
 					power: total,
 					width: width,
 				}
-
 			}
-
 		}
 	}
 	return highest
