@@ -4,6 +4,7 @@
 
   - Part 1: 12 min
   - Part 2: 9 min
+  - Clean up: 8 min
 
 - [Day 1: Not Quite Lisp](2015/day-01)
   - Part 1: 8 min
