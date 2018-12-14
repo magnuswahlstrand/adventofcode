@@ -1,11 +1,16 @@
 ## 2015
 
+- [Day 6: Probably a Fire Hazard](2015/day-06)
+
+  - Part 1: 32 min
+  - Part 2: 14 min
+  - Clean up: -
+
 - [Day 5: Doesn't He Have Intern-Elves For This?](2015/day-05)
 
   - Part 1: 14 min
   - Part 2: 27 min
   - Clean up: 5 min
-  -
 
 - [Day 4: The Ideal Stocking Stuffer](2015/day-04)
 
