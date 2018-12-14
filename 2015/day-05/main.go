@@ -38,9 +38,9 @@ func isNice(in string) bool {
 	return (vowels >= 3 && hasDoubles && !hasSpecial)
 }
 
-func isNew(counter []int, a, b int) bool {
+func isNew(used []int, a, b int) bool {
 	new := true
-	for _, v := range counter {
+	for _, v := range used {
 		if v == a || v == b {
 			// Value already used
 			new = false
