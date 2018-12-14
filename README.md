@@ -1,5 +1,12 @@
 ## 2015
 
+- [Day 5: Doesn't He Have Intern-Elves For This?](2015/day-05)
+
+  - Part 1: 14 min
+  - Part 2: 27 min
+  - Clean up: 5 min
+  -
+
 - [Day 4: The Ideal Stocking Stuffer](2015/day-04)
 
   - Part 1: 22 min

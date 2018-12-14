@@ -5,7 +5,7 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 ## Time spent
 
 | Day | Go     |        |          | Comment                                                                       |
-|-----|--------|--------|----------|-------------------------------------------------------------------------------|
+| --- | ------ | ------ | -------- | ----------------------------------------------------------------------------- |
 | Day | Part 1 | Part 2 | Total    |                                                                               |
 | 1   |        |        | ?        |                                                                               |
 | 2   | 13m    | 32m    | **45m**  | Part 2 quick in JS, since already solved in Go                                |
@@ -20,7 +20,7 @@ Entries to the [advent of code 2018](https://adventofcode.com/2018).
 | 11  | 1h30   | 15m    | **1h45** | Wrong format + 30m. Part 2 very slow, but convereges in seconds.              |
 | 12  | 45m    | 35m    | **1h20** | Not bad, messed up a bit with counting the generations, and the padding       |
 | 13  | 1h30   | 45m    | **2h15** | Forgot to sort inside loop, +30 min on part 2                                 |
-| 11  |        |        | ****     |                                                                               |
+| 14  | 1h03m  | 42m    | **1h45** |                                                                               |
 | 11  |        |        | ****     |                                                                               |
 | 11  |        |        | ****     |                                                                               |
 | 11  |        |        | ****     |                                                                               |
