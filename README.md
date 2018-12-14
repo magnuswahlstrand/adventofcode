@@ -1,5 +1,17 @@
 ## 2015
 
+- [Day 8: Matchsticks](2015/day-08)
+
+  - Part 1: 22 min
+  - Part 2: 9 min
+  - Clean up: 2 min
+
+- [Day 7: Some Assembly Required](2015/day-07)
+
+  - Part 1: 1 h 20min
+  - Part 2: 5 min
+  - Clean up: 5 min
+
 - [Day 6: Probably a Fire Hazard](2015/day-06)
 
   - Part 1: 32 min
@@ -35,3 +47,9 @@
   - Part 1: 8 min
   - Part 2: 4 min
   - Clean up: 10 min
+
+- [](2015/day-0)
+
+  - Part 1:
+  - Part 2:
+  - Clean up: -
