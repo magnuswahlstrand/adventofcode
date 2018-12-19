@@ -2,11 +2,26 @@ package main
 
 import (
 	"bytes"
+	"container/ring"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 type Grid [][]byte
+
+type CircularBuffer struct {
+	*ring.Ring
+}
+
+func (cb CircularBuffer) String() string {
+	s := ""
+	for i := 0; i < 2*cb.Len(); i++ {
+		s += fmt.Sprintf("%3d\n", cb.Value) //strconv.Itoa(cb.Value.(int))
+		cb.Ring = cb.Next()
+	}
+	return s
+}
 
 func (g Grid) count() (int, int, int) {
 	var empty, trees, lumberyards int
@@ -96,27 +111,94 @@ func (g Grid) String() string {
 	return s
 }
 
+func newBuffer(n int) CircularBuffer {
+	r := ring.New(n)
+	for i := 0; i < r.Len(); i++ {
+		r.Value = -1
+		r = r.Next()
+	}
+	return CircularBuffer{
+		r,
+	}
+}
+
 func main() {
 	fmt.Println("Day 18 - 2018\n")
 
 	content, _ := ioutil.ReadFile("input.txt")
 	grid := startingGrid(content)
-	wanted := 1000000000
-	for round := 1; round <= 10110; round++ {
 
-		if round == 10 {
-			_, trees, lumberyards := grid.count()
-			fmt.Printf("Found value for %d at %d: %d\n", round, round, trees*lumberyards)
-		}
+	buf := newBuffer(40)
+	found := make(map[int]bool)
+	wanted := 1000000000
+	matchingRound := -1
+	for round := 1; round <= 500; round++ {
 
 		grid = grid.updated()
-		if matchingRound(wanted) == round {
-			_, trees, lumberyards := grid.count()
-			fmt.Printf("Found value for %d at %d: %d\n", wanted, round, trees*lumberyards)
-			break
+		_, trees, lumberyards := grid.count()
+		score := trees * lumberyards
+
+		if _, scoreSeen := found[score]; scoreSeen {
+
+			// Search for periodicity
+			if isPeriodic, period := findPeriod(buf, score); isPeriodic {
+
+				matchingRound = (wanted-round)%period + round
+				fmt.Printf("Found that round=%d should have the same score as round=%d\n", wanted, matchingRound)
+			}
+
 		}
+
+		if matchingRound > 0 && matchingRound == round {
+			fmt.Printf("Round %d has score: %d\n", round, score)
+			os.Exit(0)
+		}
+
+		// Save score and mark as used
+		buf.Value = score
+		buf.Ring = buf.Next()
+		found[score] = true
 	}
-	fmt.Println("")
+	// Found value for 10 at 10: 652344
+	// Found value for 1000000000 at 496: 202272
+}
+
+const requiredLength = 5
+
+type match struct {
+	*ring.Ring
+	index int
+}
+
+func findPeriod(cb CircularBuffer, score int) (bool, int) {
+	search := cb.Ring
+
+	// Search for position in list
+	matches := []match{}
+	for i := 0; i < cb.Len()-requiredLength; i++ {
+		if search.Value == score {
+			matches = append(matches, match{search, i})
+		}
+		search = search.Prev()
+	}
+
+	// fmt.Println("s:", search.Value)
+	if len(matches) == 0 {
+		return false, -1
+	}
+
+Outer:
+	for _, match := range matches {
+		cmp := cb.Ring
+		for i := 0; i < requiredLength; i++ {
+			cmp, match.Ring = cmp.Prev(), match.Prev()
+			if cmp.Value != match.Value {
+				continue Outer
+			}
+		}
+		return true, match.index
+	}
+	return false, -1
 }
 
 func matchingRound(n int) int {
