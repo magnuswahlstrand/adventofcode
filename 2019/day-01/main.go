@@ -61,49 +61,49 @@ func part2Tests() {
 	}
 }
 
-func part1() {
-	input, err := ioutil.ReadFile("input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+func parseMass(input []byte) []int64 {
+	var mass []int64
 
-	var sum int64
 	rows := bytes.Split(input, []byte{'\n'})
 	for _, r := range rows {
 		m, err := strconv.ParseInt(string(r), 10, 64)
 		if err != nil {
 			log.Fatal("failed to convert", err)
 		}
-		sum += fuelRequired(m)
-	}
 
-	fmt.Println("total sum is", sum)
+		mass = append(mass, m)
+	}
+	return mass
 }
 
-func part2() {
-	input, err := ioutil.ReadFile("input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func part1(mass []int64) {
 	var sum int64
-	rows := bytes.Split(input, []byte{'\n'})
-	for _, r := range rows {
-		m, err := strconv.ParseInt(string(r), 10, 64)
-		if err != nil {
-			log.Fatal("failed to convert", err)
-		}
+	for _, m := range mass {
+		sum += fuelRequired(m)
+	}
+	fmt.Println("total sum for part 1 is:", sum)
+}
+
+func part2(mass []int64) {
+	var sum int64
+	for _, m := range mass {
 		sum += fuelRequired2(m)
 	}
-
-	fmt.Println("total sum for part two is", sum)
+	fmt.Println("total sum for part 2 is:", sum)
 }
 
 func main() {
+	input, err := ioutil.ReadFile("input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	mass := parseMass(input)
+
 	part1Tests()
-	// part1()
+	part1(mass)
+
 	part2Tests()
-	part2()
+	part2(mass)
 
 	log.Println("success")
 }
