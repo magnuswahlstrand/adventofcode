@@ -48,7 +48,7 @@ func getSteps(s string) (coord, int) {
 const offset = 10000
 
 func findClosest(l1, l2 string) (int, int) {
-	worldMap := [2 * offset][2 * offset]int{}
+	worldMap := map[coord]int{}
 	startingPos := coord{offset, offset}
 	minDistance := math.MaxInt64
 	minSignaling := math.MaxInt64
@@ -60,8 +60,8 @@ func findClosest(l1, l2 string) (int, int) {
 		d, steps := getSteps(s)
 		for i := 0; i < steps; i, tot = i+1, tot+1 {
 			pos = pos.add(d)
-			if worldMap[pos.x][pos.y] == 0 {
-				worldMap[pos.x][pos.y] = tot
+			if worldMap[pos] == 0 {
+				worldMap[pos] = tot
 			}
 		}
 	}
@@ -73,13 +73,13 @@ func findClosest(l1, l2 string) (int, int) {
 		d, steps := getSteps(s)
 		for i := 0; i < steps; i, tot = i+1, tot+1 {
 			pos = pos.add(d)
-			if worldMap[pos.x][pos.y] != 0 {
+			if worldMap[pos] != 0 {
 				if pos.manhattanDistance(startingPos) < minDistance {
 					minDistance = pos.manhattanDistance(startingPos)
 				}
 
-				if worldMap[pos.x][pos.y]+tot < minSignaling {
-					minSignaling = worldMap[pos.x][pos.y] + tot
+				if worldMap[pos]+tot < minSignaling {
+					minSignaling = worldMap[pos] + tot
 				}
 			}
 		}
