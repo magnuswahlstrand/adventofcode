@@ -38,13 +38,6 @@ func TestSomething(t *testing.T) {
 	require.EqualValues(t, 71, errorRate)
 }
 
-func TestSomething2(t *testing.T) {
-	input := testInput
-
-	errorRate := part1ErrorRate(input)
-	require.EqualValues(t, 71, errorRate)
-}
-
 func TestRange(t *testing.T) {
 	pair := rangePair{
 		first:  [2]int{1, 5},
