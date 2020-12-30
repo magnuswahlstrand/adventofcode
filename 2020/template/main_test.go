@@ -6,4 +6,4 @@ import (
 
 var testInput = []byte(``)
 
-func TestSomething(t *testing.T) {}
+func TestPart1(t *testing.T) {}

@@ -64,9 +64,6 @@ func TestPart2AndPrint(t *testing.T) {
 	active := applyNext2(size, wxyzWorld)
 	require.EqualValues(t, 29, active)
 
-	//	fmt.Println("---")
-	//	printWorld2(mid, mid, mid, offset+1, wxyzWorld)
-
 	prepareNext2(size, wxyzWorld)
 	active = applyNext2(size, wxyzWorld)
 	require.EqualValues(t, 60, active)
