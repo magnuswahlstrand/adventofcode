@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -35,30 +36,17 @@ func part1(input []byte) {
 	rules := parseRules(input)
 
 	// Iterate
-	evaluatesTo := map[string][]string{}
-	allowedMessages := evaluate(rules, evaluatesTo, "0")
-	count := countAllowed(allowedMessages, input)
+	evaluatesTo := map[string]string{}
+	re := evalAndRegex(rules, evaluatesTo)
+	count, _ := validMessages(input, re)
 	fmt.Println("answer part 1:", count)
 }
 
 func part2(input []byte) {
-	//fmt.Println("answer part 2:", sum)
 	rules := parseRules(input)
-	evaluatesTo := map[string][]string{}
-	rules42 := evaluate(rules, evaluatesTo, "42")
-	rules31 := evaluate(rules, evaluatesTo, "31")
-
-	fmt.Println(rules42)
-	fmt.Println(rules31)
-	//rules0 := evaluate(rules, evaluatesTo, "0")
-	//
-
-	countAll, countOK := naiveFilterAndCount(input, rules42, rules31)
-	fmt.Printf("%d/%d\n", countOK, countAll)
-	//
-	//for key, val := range evaluatesTo {
-	//	fmt.Println(key, val)
-	//}
+	regexs := calculateRegexPart2(rules)
+	count, _ := validMessagesPart2(input, regexs)
+	fmt.Println("answer part 1:", count)
 }
 
 type rule struct {
@@ -149,119 +137,111 @@ func evaluate(rules map[string]rule, evaluatesTo map[string][]string, name strin
 	return result
 }
 
-//func evaluate2(rules map[string]rule, evaluatesTo map[string][]string, currentRule string, s string) bool {
-//	fmt.Println(s)
-//	if val, ok := evaluatesTo[currentRule]; ok {
-//		// Return from cache
-//		for _, v := range val {
-//			if s == v {
-//				return true
-//			}
-//		}
-//		return false
-//	}
-//
-//	r := rules[currentRule]
-//	switch {
-//	case strings.Contains(r.expression, "\""):
-//		// Is end rule "a" --> a
-//		result = []string{r.expression[1:2]}
-//	default:
-//		// Split into sub rules 1 2 | 3 4 --> 1 2, 3 4
-//		for _, subSection := range strings.Split(r.expression, " | ") {
-//
-//			// Evaluate each expression, e.g. 3 and 4
-//			var res2 []string
-//			subRules := strings.Split(subSection, " ")
-//			for i, name := range subRules {
-//				if i == 0 {
-//					res2 = append(res2, evaluate(rules, evaluatesTo, name)...)
-//					continue
-//				}
-//
-//				eval := evaluate(rules, evaluatesTo, name)
-//				var tmpResult []string
-//				for _, s1 := range res2 {
-//					for _, s2 := range eval {
-//						tmpResult = append(tmpResult, s1+s2)
-//					}
-//				}
-//				res2 = tmpResult
-//			}
-//			result = append(result, res2...)
-//		}
-//	}
-//	return false
-//	//
-//	//
-//	//var result []string
-//	//switch {
-//	//case strings.Contains(r.expression, "\""):
-//	//	// Is end rule "a" --> a
-//	//	result = []string{r.expression[1:2]}
-//	//default:
-//	//	// Split into sub rules 1 2 | 3 4 --> 1 2, 3 4
-//	//	for _, subSection := range strings.Split(r.expression, " | ") {
-//	//
-//	//		// Evaluate each expression, e.g. 3 and 4
-//	//		var res2 []string
-//	//		subRules := strings.Split(subSection, " ")
-//	//		for i, name := range subRules {
-//	//			if i == 0 {
-//	//				res2 = append(res2, evaluate(rules, evaluatesTo, name)...)
-//	//				continue
-//	//			}
-//	//
-//	//			eval := evaluate(rules, evaluatesTo, name)
-//	//			var tmpResult []string
-//	//			for _, s1 := range res2 {
-//	//				for _, s2 := range eval {
-//	//					tmpResult = append(tmpResult, s1+s2)
-//	//				}
-//	//			}
-//	//			res2 = tmpResult
-//	//		}
-//	//		result = append(result, res2...)
-//	//	}
-//	//}
-//	//
-//	//for _, val := range result {
-//	//	fmt.Println(len(val))
-//	//}
-//	//
-//	//evaluatesTo[currentRule] = result
-//	//return result
-//}
+func evalAndRegex(rules map[string]rule, evaluatesTo map[string]string) *regexp.Regexp {
+	val := evaluatePart1(rules, evaluatesTo, "0")
+	re, err := regexp.Compile("^" + val + "$")
+	if err != nil {
+		log.Fatal("failed compiling regex", err)
+	}
+	return re
+}
 
-func naiveFilterAndCount(input []byte, rules42 []string, rules31 []string) (int, int) {
+func validMessages(input []byte, re *regexp.Regexp) (int, []string) {
 	receievedMessages := strings.Split(strings.Split(string(input), "\n\n")[1], "\n")
-	countAll := len(receievedMessages)
-	countOK := 0
-
+	var count int
+	var validMessages []string
 	for _, message := range receievedMessages {
-		// Count number of suffixes from 31 occur
-
-		// Try trimming any of the 8 prefixes, and search from there
-		var ok, suffixOK bool
-		for _, prefix := range rules42 {
-			for _, prefix2 := range rules42 {
-				if strings.HasPrefix(message, prefix+prefix2) {
-					ok = true
-					break
-				}
-			}
+		if re.MatchString(message) {
+			count++
+			validMessages = append(validMessages, message)
 		}
+	}
+	return count, validMessages
+}
 
-		for _, suffix := range rules31 {
-			if strings.HasSuffix(message, suffix) {
-				suffixOK = true
+func validMessagesPart2(input []byte, regexs []*regexp.Regexp) (int, []string) {
+	receievedMessages := strings.Split(strings.Split(string(input), "\n\n")[1], "\n")
+	var count int
+	var validMessages []string
+	for _, message := range receievedMessages {
+		for _, re := range regexs {
+			if re.MatchString(message) {
+				count++
+				validMessages = append(validMessages, message)
 				break
 			}
 		}
+	}
+	return count, validMessages
+}
 
-		if ok && suffixOK {
-			countOK++
+func evaluatePart1(rules map[string]rule, evaluatesTo map[string]string, name string) string {
+	if val, ok := evaluatesTo[name]; ok {
+		// Return from cache
+		return val
+	}
+
+	r := rules[name]
+	var result string
+	switch {
+	case strings.Contains(r.expression, "\""):
+		// Is end rule "a" --> a
+		result = r.expression[1:2]
+	default:
+		// Split into sub rules 1 2 | 3 4 --> 1 2, 3 4
+		//fmt.Println("expr", r.expression)
+		var parts []string
+		for _, subSection := range strings.Split(r.expression, " | ") {
+
+			//fmt.Println("sub sect", subSection)
+			//// Evaluate each expression, e.g. 3 and 4
+			var res2 string
+			subRules := strings.Split(subSection, " ")
+			for _, name := range subRules {
+				res2 += evaluatePart1(rules, evaluatesTo, name)
+				//fmt.Println(name)
+			}
+			//	//if i == 0 {
+			//	//	res2 = append(res2, evaluatePart1(rules, evaluatesTo, name)...)
+			//	//	continue
+			//	//}
+			//
+			//	eval := evaluatePart1(rules, evaluatesTo, name)
+			//	var tmpResult []string
+			//	for _, s1 := range res2 {
+			//		for _, s2 := range eval {
+			//			tmpResult = append(tmpResult, s1+s2)
+			//		}
+			//	}
+			//	res2 = tmpResult
+			//}
+			//result = append(result, res2...)
+			parts = append(parts, res2)
+		}
+		result = "(" + strings.Join(parts, "|") + ")"
+	}
+
+	evaluatesTo[name] = result
+	return result
+}
+
+func calculateRegexPart2(rules map[string]rule) []*regexp.Regexp {
+	evaluatesTo := map[string]string{}
+	rules42 := evaluatePart1(rules, evaluatesTo, "42")
+	rules31 := evaluatePart1(rules, evaluatesTo, "31")
+	var regexs []*regexp.Regexp
+	for num8 := 1; num8 <= 6; num8++ {
+		for num11 := 1; num11 <= 6; num11++ {
+			// Prepend rule 42s and add suffix of rule31
+			regString := fmt.Sprintf("^%s{%d}%s{%d}%s{%d}$", rules42, num8, rules42, num11, rules31, num11)
+			re, err := regexp.Compile(regString)
+			if err != nil {
+				log.Fatal(err)
+			}
+			regexs = append(regexs, re)
 		}
 	}
-	return countAll, countOK
+	return regexs
 }
+
+// Guessed 348 --> too low
