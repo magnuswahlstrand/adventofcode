@@ -1,0 +1,24 @@
+{
+  "name": "adventofcode",
+  "version": "1.0.0",
+  "description": "Day 4 * Object.values * Object.values(Enum)",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --config ./.mocharc.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.3"
+  },
+  "dependencies": {
+    "@types/node": "^16.4.12",
+    "path": "^0.12.7",
+    "ts-node": "^10.1.0",
+    "tsconfig-paths": "^3.10.1",
+    "tslib": "^2.3.0"
+  }
+}

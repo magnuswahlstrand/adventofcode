@@ -1,3 +1,4 @@
+import "../lib/index";
 import {readFileSync} from 'fs';
 
 // Derived from https://github.com/AlexAegis/advent-of-code/blob/master/solutions/typescript/2020/04/part_one.ts
@@ -39,25 +40,6 @@ function part1(input: string): number {
         .filter(isPassport).length
 }
 
-declare global {
-    interface String {
-        toInt(radix?: number): number | undefined;
-    }
-
-    interface Number {
-        isBetween(v1: number, v2: number): boolean
-    }
-}
-
-String.prototype.toInt = function (this: string, radix = 10): number | undefined {
-    const n = parseInt(this, radix)
-    return isNaN(n) ? undefined : n
-}
-
-Number.prototype.isBetween = function (this: number, v1, v2: number) {
-    return this >= v1 && this <= v2
-}
-
 const color = new Set(['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']);
 
 function hasValidValues(p: Passport) {
@@ -91,6 +73,7 @@ function part2(input: string): number {
         .filter(hasValidValues).length
 }
 
+// @ts-ignore
 const testInput = `pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
 hcl:#623a2f
 
