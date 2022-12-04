@@ -1,5 +1,6 @@
+use std::{fs, io};
 use std::borrow::Borrow;
-use std::fs;
+use std::io::BufRead;
 
 // A == X Rock
 // B == Y Paper
@@ -60,14 +61,18 @@ fn part_1(filename: &str) -> Option<i32> {
         total_score += round_score + move_score;
         // println!("Round score: {}", round_score + move_score);
     }
-    return Some(total_score)
+    return Some(total_score);
 }
 
 fn part_2(filename: &str) -> Option<i32> {
-    let data = fs::read_to_string(filename).expect("Unable to read file");
+    let file = fs::File::open(filename).ok()?;
+    let reader = io::BufReader::new(file);
 
     let mut total_score = 0;
-    for mut round in data.trim().split("\n").map(|x| x.split(" ")) {
+    for line in reader.lines() {
+        let line = line.ok()?;
+        let mut round = line.split(" ");
+
         let them = lookup_move(round.next()?);
         let you = lookup_required_move(round.next()?, them.borrow().clone());
         let round_score = calculate_round_score(them, &you);
@@ -81,7 +86,7 @@ fn part_2(filename: &str) -> Option<i32> {
         total_score += round_score + move_score;
         // println!("Round score: {} {}", move_score, round_score);
     }
-    return Some(total_score)
+    return Some(total_score);
 }
 
 fn calculate_round_score(them: Move, you: &Move) -> i32 {
