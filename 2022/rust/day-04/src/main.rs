@@ -41,18 +41,21 @@ impl FromStr for ElfPair {
     type Err = Box<dyn Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (elf_a, elf_b) = s.split_once(",").unwrap();
-        // let (elf_a, elf_b) = s.split([',','-']).unwrap();
-        let (a_start, a_end) = elf_a.split_once("-").unwrap();
-        let (b_start, b_end) = elf_b.split_once("-").unwrap();
+        // let (elf_a, elf_b) = s.split_once(",").unwrap();
+
+        let vals = s.split([',','-']).map(|x| x.parse::<u32>().unwrap()).collect::<Vec<u32>>();
+        if vals.len() != 4 {
+            return Err(Box::new(simple_error::SimpleError::new("Invalid input")));
+        }
+
         Ok(ElfPair {
             one: Range {
-                s: a_start.parse::<u32>()?,
-                e: a_end.parse::<u32>()?,
+                s: vals[0],
+                e: vals[1],
             },
             two: Range {
-                s: b_start.parse::<u32>()?,
-                e: b_end.parse::<u32>()?,
+                s: vals[2],
+                e: vals[3],
             },
         })
     }

@@ -23,7 +23,6 @@ impl StacksContainer {
             }
         }
 
-        println!("{:?}", (lines[0].len() + 1) / 4);
         StacksContainer {
             stacks: stacks,
         }
@@ -69,20 +68,24 @@ fn part_1(filename: &str) -> Result<&str, Box<dyn Error>> {
 
     for line in iterator.by_ref() {
         let line = line?;
-        let action = line.split(" ").collect::<Vec<&str>>();
-        if let [a, b, c] = [&action[1], &action[3], &action[5]] {
-            stacks.move_between(
-                a.parse::<usize>().unwrap(),
-                b.parse::<usize>().unwrap(),
-                c.parse::<usize>().unwrap(),
-            )
-        }
+        let (n, from, to) = parse_action(line);
+        stacks.move_between(n, from, to)
     }
 
-    println!("{:?}", stacks);
     stacks.final_words();
 
     Ok("")
+}
+
+fn parse_action(line: String) -> (usize, usize, usize) {
+    let action = line.split(" ").collect::<Vec<&str>>();
+    if action.len() < 6 {
+        panic!("invalid action: {line}");
+    }
+
+    let [n, from, to] = [&action[1], &action[3], &action[5]]
+        .map(|s| s.parse::<usize>().unwrap());
+    (n, from, to)
 }
 
 fn part_2(filename: &str) -> Result<&str, Box<dyn Error>> {
@@ -103,17 +106,10 @@ fn part_2(filename: &str) -> Result<&str, Box<dyn Error>> {
 
     for line in iterator.by_ref() {
         let line = line?;
-        let action = line.split(" ").collect::<Vec<&str>>();
-        if let [a, b, c] = [&action[1], &action[3], &action[5]] {
-            stacks.move_between_v2(
-                a.parse::<usize>().unwrap(),
-                b.parse::<usize>().unwrap(),
-                c.parse::<usize>().unwrap(),
-            )
-        }
+        let (n, from, to) = parse_action(line);
+        stacks.move_between_v2(n, from, to)
     }
 
-    println!("{:?}", stacks);
     stacks.final_words();
 
     Ok("")
