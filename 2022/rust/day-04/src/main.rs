@@ -115,7 +115,8 @@ fn part_2_2(filename: &str) -> Result<i32, Box<dyn Error>> {
 }
 
 fn main() {
-    let filename = "input.txt";
+    // let filename = "input.txt";
+    let filename = "input_test.txt";
     println!("Part 1: {:?}", part_1_2(filename).unwrap());
     println!("Part 2: {:?}", part_2_2(filename).unwrap());
 }
