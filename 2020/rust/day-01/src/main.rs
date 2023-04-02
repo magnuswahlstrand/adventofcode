@@ -4,10 +4,17 @@ use std::io::BufRead;
 use itertools::Itertools;
 
 fn main() {
+    use std::time::Instant;
+    let now = Instant::now();
+
+
     let filename = "input.txt";
     // let filename = "input_test.txt";
     println!("Part 1: {:?}", part_1(filename).unwrap());
     println!("Part 2: {:?}", part_2(filename).unwrap());
+
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
 }
 
 fn part_1(filename: &str) -> Result<u32, &str> {
@@ -35,7 +42,6 @@ fn part_2(filename: &str) -> Result<usize, &str> {
     let input: Vec<usize> = reader
         .lines()
         .map(|line| line.unwrap().parse::<usize>().unwrap()).collect();
-
 
     for v in input.iter().combinations(3) {
         if v[0] + v[1] + v[2] == 2020 {
